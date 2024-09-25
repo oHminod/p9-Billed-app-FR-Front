@@ -195,7 +195,6 @@ describe("Given I am connected as an employee", () => {
         expect.any(Object)
       );
 
-      // Now that data-testid="date" is added, this should work
       const dateElements = screen
         .getAllByTestId("date")
         .map((a) => a.innerHTML);
