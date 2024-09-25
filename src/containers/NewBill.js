@@ -19,24 +19,19 @@ export default class NewBill {
   }
   handleChangeFile = (e) => {
     e.preventDefault();
-    const file = this.document.querySelector(`input[data-testid="file"]`)
-      .files[0];
-    const filePath = e.target.value.split(/\\/g);
-    const fileName = filePath[filePath.length - 1];
-    const fileExtension = fileName.split(".").pop();
+    const fileInput = this.document.querySelector(`input[data-testid="file"]`);
+    const file = fileInput.files[0];
+    const fileName = file.name;
+    const fileExtension = fileName.split(".").pop().toLowerCase();
     const formData = new FormData();
     const email = JSON.parse(localStorage.getItem("user")).email;
     const errorFileMsg = document.getElementById("file_error");
     const errorSubmitMsg = document.getElementById("submit_error");
 
-    if (
-      fileExtension !== "jpg" &&
-      fileExtension !== "jpeg" &&
-      fileExtension !== "png"
-    ) {
+    if (!["jpg", "jpeg", "png"].includes(fileExtension)) {
       errorFileMsg.textContent = "Format de fichier invalide";
-      e.target.value = null;
-      return console.error("Format de fichier invalide");
+      fileInput.value = "";
+      return;
     }
     errorFileMsg.textContent = "";
     errorSubmitMsg.textContent = "";
@@ -53,13 +48,15 @@ export default class NewBill {
         },
       })
       .then(({ fileUrl, key }) => {
-        console.log(fileUrl);
         this.billId = key;
         this.fileUrl = fileUrl;
         this.fileName = fileName;
       })
-      .catch((error) => console.error(error));
+      .catch((error) => {
+        console.error(error);
+      });
   };
+
   handleSubmit = (e) => {
     e.preventDefault();
     const errorSubmitMsg = document.getElementById("submit_error");
